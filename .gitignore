@@ -1,0 +1,27 @@
+# System files
+NTUSER.DAT*
+ntuser.*
+
+# Personal folders
+AppData/
+Contacts/
+Desktop/
+Documents/
+Downloads/
+Favorites/
+Music/
+Pictures/
+Saved Games/
+Searches/
+Videos/
+OneDrive*/
+
+# Git/Development
+.gitconfig
+.git-credentials
+.cache/
+.docker/
+.gemini/
+.node_repl_history
+.vscode/
+.vscode-shared/
