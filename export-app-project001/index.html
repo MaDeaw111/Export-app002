@@ -44,9 +44,9 @@
                 <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
                     <p class="text-sm font-medium text-gray-500">Active Containers</p>
                     <p class="text-3xl font-bold text-gray-900 mt-2">35 <span class="text-sm font-normal text-gray-400">Containers</span></p>
-                    <div class="mt-2 flex gap-4 text-xs">
-                        <span class="bg-gray-100 px-2 py-1 rounded">20x 20'</span>
-                        <span class="bg-gray-100 px-2 py-1 rounded">15x 40'</span>
+                    <div class="mt-2 flex gap-4 text-xs font-semibold">
+                        <span class="bg-emerald-50 text-emerald-700 px-2 py-1 rounded">20x 20'</span>
+                        <span class="bg-blue-50 text-blue-700 px-2 py-1 rounded">15x 40'</span>
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
@@ -55,33 +55,35 @@
                 </div>
             </div>
 
-            <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-xl relative overflow-hidden">
-                <h2 class="text-sm font-bold text-slate-400 mb-6 uppercase tracking-wider">Global Export Movements</h2>
-                <svg viewBox="0 0 800 400" class="w-full h-64 fill-slate-800 stroke-slate-700">
-                    <path d="M400,200 C300,100 100,150 50,200 C50,300 200,350 300,300 Z" /> <!-- Asia -->
-                    <path d="M600,150 C700,100 750,200 700,250 Z" /> <!-- Americas -->
-                    <path d="M450,150 C500,100 550,200 500,250 Z" /> <!-- Europe -->
-                    <!-- Hotspots -->
-                    <g onmouseover="showTooltip(event, 'China', 12, 240)">
-                        <circle cx="350" cy="200" r="12" class="animate-ping fill-emerald-500 opacity-75"/>
-                        <circle cx="350" cy="200" r="6" class="fill-emerald-400"/>
-                    </g>
-                    <g onmouseover="showTooltip(event, 'Japan', 5, 95)">
-                        <circle cx="380" cy="180" r="8" class="animate-ping fill-emerald-500 opacity-75"/>
-                        <circle cx="380" cy="180" r="4" class="fill-emerald-400"/>
-                    </g>
-                    <g onmouseover="showTooltip(event, 'Netherlands', 2, 38)">
-                        <circle cx="480" cy="130" r="6" class="animate-ping fill-emerald-500 opacity-75"/>
-                        <circle cx="480" cy="130" r="3" class="fill-emerald-400"/>
-                    </g>
-                </svg>
-                <div id="map-tooltip" class="hidden absolute bg-black text-white text-[10px] p-2 rounded shadow-xl border border-slate-700 pointer-events-none"></div>
+            <!-- SVG WORLD MAP -->
+            <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 shadow-xl">
+                <h2 class="text-sm font-bold text-slate-400 mb-4 uppercase tracking-wider">Global Export Movements</h2>
+                <div class="relative">
+                    <svg viewBox="0 0 1000 500" class="w-full fill-slate-800 stroke-slate-900">
+                        <path d="M125 180c-5-5-2-10 2-15s10-5 15-2 10 5 10 10-5 10-15 10c-5 0-10-5-12-3zM250 150c-20-20-10-40 10-40s40 10 40 40-20 30-40 10zM500 150c20-20 40-10 40 10s-20 40-40 40-40-20-40-40 20-10 40-10z"/>
+                        <!-- Hotspots -->
+                        <g onmouseover="showTooltip(event, 'East Asia (China)', 20, 380)">
+                            <circle cx="750" cy="200" r="10" class="animate-ping fill-emerald-500 opacity-75"/>
+                            <circle cx="750" cy="200" r="5" class="fill-emerald-400"/>
+                        </g>
+                        <g onmouseover="showTooltip(event, 'Japan', 15, 357.75)">
+                            <circle cx="820" cy="180" r="8" class="animate-ping fill-emerald-500 opacity-75"/>
+                            <circle cx="820" cy="180" r="4" class="fill-emerald-400"/>
+                        </g>
+                        <g onmouseover="showTooltip(event, 'Europe (Netherlands)', 2, 38)">
+                            <circle cx="480" cy="130" r="6" class="animate-ping fill-emerald-500 opacity-75"/>
+                            <circle cx="480" cy="130" r="3" class="fill-emerald-400"/>
+                        </g>
+                    </svg>
+                    <div id="map-tooltip" class="hidden absolute bg-black text-white text-[10px] p-2 rounded shadow-xl border border-slate-700 pointer-events-none"></div>
+                </div>
             </div>
 
+            <!-- FILTERS & TABLE -->
             <div class="flex gap-4 bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
-                <select id="filter-customer" onchange="filterTable()" class="text-sm border-gray-300 rounded-lg p-2 border"><option value="">All Customers</option></select>
-                <select id="filter-product" onchange="filterTable()" class="text-sm border-gray-300 rounded-lg p-2 border"><option value="">All Products</option></select>
-                <select id="filter-country" onchange="filterTable()" class="text-sm border-gray-300 rounded-lg p-2 border"><option value="">All Destinations</option></select>
+                <select class="text-sm border-gray-300 rounded-lg p-2 border"><option>All Customers</option></select>
+                <select class="text-sm border-gray-300 rounded-lg p-2 border"><option>All Products</option></select>
+                <select class="text-sm border-gray-300 rounded-lg p-2 border"><option>All Destinations</option></select>
             </div>
 
             <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
@@ -111,11 +113,10 @@
             { cust: 'Global Feed', po: 'PO-10498', di: 'DI-2023-9005', prod: 'THP', log: 'CMA CGM / 40\'', etd: '15 Nov', eta: '28 Nov', status: 'In Progress', stuffing: '#', docs: '#' }
         ];
 
-        function showTooltip(e, dest, act, vol) {
+        function showTooltip(e, region, act, vol) {
             const tt = document.getElementById('map-tooltip');
-            tt.innerText = `Destination: ${dest} | Active: ${act} Shipments | Volume: ${vol} MT`;
-            tt.style.left = (e.clientX + 10) + 'px';
-            tt.style.top = (e.clientY + 10) + 'px';
+            tt.innerText = `Region: ${region} | Active: ${act} Containers | Volume: ${vol} MT`;
+            tt.style.left = (e.clientX + 10) + 'px'; tt.style.top = (e.clientY + 10) + 'px';
             tt.classList.remove('hidden');
         }
         window.onmousemove = (e) => {
@@ -128,11 +129,11 @@
             const body = document.getElementById('shipment-table-body');
             body.innerHTML = data.map(item => `
                 <tr class="hover:bg-gray-50">
-                    <td class="px-4 py-4 text-sm font-semibold text-gray-900">${item.cust}</td>
+                    <td class="px-4 py-4 text-sm font-semibold">${item.cust}</td>
                     <td class="px-4 py-4 text-sm text-gray-500">${item.po}</td>
                     <td class="px-4 py-4 text-sm font-mono font-medium">${item.di}</td>
-                    <td class="px-4 py-4 text-sm text-gray-900">${item.prod}</td>
-                    <td class="px-4 py-4 text-sm text-gray-900">${item.log}</td>
+                    <td class="px-4 py-4 text-sm">${item.prod}</td>
+                    <td class="px-4 py-4 text-sm">${item.log}</td>
                     <td class="px-4 py-4 text-sm text-gray-600">${item.etd}</td>
                     <td class="px-4 py-4 text-sm text-gray-600">${item.eta}</td>
                     <td class="px-4 py-4"><span class="px-2 py-1 text-xs font-semibold rounded-full ${item.status === 'Issue Logged' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}">${item.status}</span></td>
