@@ -55,28 +55,34 @@
                 </div>
             </div>
 
-            <!-- SVG WORLD MAP -->
-            <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 shadow-xl">
-                <h2 class="text-sm font-bold text-slate-400 mb-4 uppercase tracking-wider">Global Export Movements</h2>
-                <div class="relative">
-                    <svg viewBox="0 0 1000 500" class="w-full fill-slate-800 stroke-slate-900">
-                        <path d="M125 180c-5-5-2-10 2-15s10-5 15-2 10 5 10 10-5 10-15 10c-5 0-10-5-12-3zM250 150c-20-20-10-40 10-40s40 10 40 40-20 30-40 10zM500 150c20-20 40-10 40 10s-20 40-40 40-40-20-40-40 20-10 40-10z"/>
-                        <!-- Hotspots -->
-                        <g onmouseover="showTooltip(event, 'East Asia (China)', 20, 380)">
-                            <circle cx="750" cy="200" r="10" class="animate-ping fill-emerald-500 opacity-75"/>
-                            <circle cx="750" cy="200" r="5" class="fill-emerald-400"/>
-                        </g>
-                        <g onmouseover="showTooltip(event, 'Japan', 15, 357.75)">
-                            <circle cx="820" cy="180" r="8" class="animate-ping fill-emerald-500 opacity-75"/>
-                            <circle cx="820" cy="180" r="4" class="fill-emerald-400"/>
-                        </g>
-                        <g onmouseover="showTooltip(event, 'Europe (Netherlands)', 2, 38)">
-                            <circle cx="480" cy="130" r="6" class="animate-ping fill-emerald-500 opacity-75"/>
-                            <circle cx="480" cy="130" r="3" class="fill-emerald-400"/>
-                        </g>
-                    </svg>
-                    <div id="map-tooltip" class="hidden absolute bg-black text-white text-[10px] p-2 rounded shadow-xl border border-slate-700 pointer-events-none"></div>
+            <!-- WORLD MAP -->
+            <div class="bg-[#0f172a] p-6 rounded-2xl shadow-xl border border-slate-800 relative h-[350px] overflow-hidden">
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Global Export Movements</h2>
+                
+                <!-- Minimalist Map Background -->
+                <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: url('https://www.svgrepo.com/show/512530/world-map.svg'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                
+                <!-- Hotspots -->
+                <div class="absolute top-[40%] left-[65%] group cursor-pointer" onmouseover="showTooltip(event, 'East Asia (China)', 20, 380)">
+                    <div class="relative flex items-center justify-center">
+                        <div class="animate-ping absolute inline-flex h-8 w-8 rounded-full bg-emerald-400 opacity-75 shadow-[0_0_30px_rgba(52,211,153,0.6)]"></div>
+                        <div class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></div>
+                    </div>
                 </div>
+                <div class="absolute top-[35%] left-[70%] group cursor-pointer" onmouseover="showTooltip(event, 'Japan', 15, 357.75)">
+                    <div class="relative flex items-center justify-center">
+                        <div class="animate-ping absolute inline-flex h-5 w-5 rounded-full bg-emerald-400 opacity-75"></div>
+                        <div class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></div>
+                    </div>
+                </div>
+                <div class="absolute top-[25%] left-[45%] group cursor-pointer" onmouseover="showTooltip(event, 'Europe (Netherlands)', 2, 38)">
+                    <div class="relative flex items-center justify-center">
+                        <div class="animate-ping absolute inline-flex h-4 w-4 rounded-full bg-emerald-400 opacity-75"></div>
+                        <div class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></div>
+                    </div>
+                </div>
+
+                <div id="map-tooltip" class="hidden absolute bg-black/80 text-white text-[11px] p-3 rounded-lg shadow-2xl border border-slate-700 pointer-events-none z-50 whitespace-nowrap"></div>
             </div>
 
             <!-- FILTERS & TABLE -->
