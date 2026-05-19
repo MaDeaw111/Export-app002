@@ -53,9 +53,6 @@
                     <button onclick="switchView('calendar')" id="nav-calendar" class="nav-btn border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
                         Stuffing Calendar
                     </button>
-                    <button onclick="switchView('warehouse')" id="nav-warehouse" class="nav-btn border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
-                        Warehouse App
-                    </button>
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -200,18 +197,6 @@
             </div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- VIEW 3: WAREHOUSE FIELD APP                -->
-        <!-- ========================================== -->
-        <div id="view-warehouse" class="max-w-md mx-auto space-y-6 hidden">
-            <div class="text-center"><h1 class="text-2xl font-bold">Stuffing Input</h1></div>
-            <div class="bg-white rounded-2xl shadow-md p-6 space-y-4">
-                <input type="text" placeholder="Container Number" class="w-full border rounded-lg p-3 font-mono">
-                <input type="text" placeholder="Seal Number" class="w-full border rounded-lg p-3 font-mono">
-                <button class="w-full bg-emerald-600 text-white py-3 rounded-xl font-bold">SUBMIT DATA</button>
-            </div>
-        </div>
-
     </main>
 
     <!-- UPDATE MODAL (FOR MASTER TABLE) -->
@@ -254,12 +239,16 @@
 
     <script>
         function switchView(viewId) {
-            ['dashboard', 'calendar', 'warehouse'].forEach(v => document.getElementById('view-'+v).classList.add('hidden'));
+            ['dashboard', 'calendar'].forEach(v => {
+                const el = document.getElementById('view-'+v);
+                if(el) el.classList.add('hidden');
+            });
             document.getElementById('view-'+viewId).classList.remove('hidden');
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('border-emerald-500', 'text-gray-900'));
             const active = document.getElementById('nav-'+viewId);
             if(active) active.classList.add('border-emerald-500', 'text-gray-900');
         }
+
 
         function openUpdateModal(di, stuffing, docs) {
             document.getElementById('update-di').innerText = di;
