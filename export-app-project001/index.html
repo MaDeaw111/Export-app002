@@ -62,9 +62,22 @@
             </div>
 
             <!-- WORLD MAP -->
-            <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                <div class="h-48 bg-slate-50 rounded-lg border border-dashed border-gray-300 flex items-center justify-center relative">
-                    <p class="text-gray-400 text-xs font-semibold">WORLD MAP VISUALIZATION</p>
+            <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-xl">
+                <h2 class="text-sm font-bold text-slate-400 mb-6 uppercase tracking-wider">Export Movements Map</h2>
+                <div class="h-64 relative">
+                    <svg viewBox="0 0 800 400" class="w-full h-full stroke-slate-700 stroke-1 fill-slate-800">
+                        <path d="M50 50 L750 50 L750 350 L50 350 Z" />
+                        <g id="hotspot-china" class="cursor-pointer">
+                            <circle cx="200" cy="150" r="10" fill="#059669" class="animate-ping opacity-75"/>
+                            <circle cx="200" cy="150" r="5" fill="#10b981"/>
+                        </g>
+                        <g id="hotspot-japan" class="cursor-pointer">
+                            <circle cx="250" cy="120" r="4" fill="#34d399"/>
+                        </g>
+                        <g id="hotspot-netherlands" class="cursor-pointer">
+                            <circle cx="500" cy="100" r="4" fill="#34d399"/>
+                        </g>
+                    </svg>
                 </div>
             </div>
 
