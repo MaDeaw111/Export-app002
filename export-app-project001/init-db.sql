@@ -1,7 +1,7 @@
 -- =======================================================================================
 -- DATABASE ARCHITECTURE - POSTGRESQL SQL SCRIPT (SUPABASE COMPATIBLE)
 -- Collaborative Export & Stuffing Operations Platform - Tapioca Hard Pellet
--- Features: 4-Level RBAC & Row Level Security (RLS)
+-- Features: 4-Level RBAC & Row Level Security (RLS) + Document Tracking
 -- =======================================================================================
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -11,7 +11,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- ---------------------------------------------------------------------------------------
 CREATE TYPE user_role AS ENUM (
     'management', 
-    'operations', -- Consolidates Prod/Warehouse/Shipping
+    'operations', 
     'sales', 
     'customer'
 );
@@ -30,7 +30,7 @@ CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,
     role user_role NOT NULL,
     full_name VARCHAR(255) NOT NULL,
-    sales_id UUID REFERENCES users(id) ON DELETE SET NULL, -- Self-referencing for hierarchy if needed
+    sales_id UUID REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -94,6 +94,8 @@ CREATE TABLE shipments (
     eta_date DATE,
     has_issue BOOLEAN DEFAULT FALSE,
     issue_description TEXT,
+    stuffing_report_url TEXT, -- Link to stuffing report document
+    all_ship_doc_url TEXT,    -- Link to Google Drive/PDF folder containing all docs
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -118,9 +120,8 @@ CREATE TABLE shipment_status_history (
 );
 
 -- ---------------------------------------------------------------------------------------
--- ROW LEVEL SECURITY (RLS) POLICIES (SUPABASE AUTH.UID() COMPATIBLE)
+-- RLS POLICIES (REMAIN UNCHANGED FROM PREVIOUS REVISION)
 -- ---------------------------------------------------------------------------------------
-
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
@@ -131,34 +132,25 @@ ALTER TABLE shipments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE shipment_containers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE shipment_status_history ENABLE ROW LEVEL SECURITY;
 
--- Helper function to get current user role
 CREATE OR REPLACE FUNCTION get_user_role() RETURNS user_role AS $$
   SELECT role FROM users WHERE id = auth.uid();
 $$ LANGUAGE sql SECURITY DEFINER;
 
--- 1. Management: Full Access to everything
 CREATE POLICY management_all ON users FOR ALL USING (get_user_role() = 'management');
 CREATE POLICY management_all ON customers FOR ALL USING (get_user_role() = 'management');
 CREATE POLICY management_all ON purchase_orders FOR ALL USING (get_user_role() = 'management');
 CREATE POLICY management_all ON shipments FOR ALL USING (get_user_role() = 'management');
 CREATE POLICY management_all ON shipment_containers FOR ALL USING (get_user_role() = 'management');
 
--- Master Data (Products, Configs): Read-only for all, write for management
 CREATE POLICY public_read_products ON products FOR SELECT USING (true);
 CREATE POLICY public_read_specs ON product_specifications FOR SELECT USING (true);
 CREATE POLICY public_read_pkg ON packaging_configurations FOR SELECT USING (true);
 
--- 2. Operations (Prod/Warehouse/Shipping)
--- Task specific access. No pricing visibility (Cannot select PO price).
 CREATE POLICY ops_read_customers ON customers FOR SELECT USING (get_user_role() = 'operations');
--- Restrict PO selection (omit pricing via view or app level, but RLS restricts entire row. 
--- In pure Postgres, column-level SELECT privileges are used. For RLS, they can read the row but UI hides price, OR we grant access to a specific view).
 CREATE POLICY ops_read_po ON purchase_orders FOR SELECT USING (get_user_role() = 'operations');
 CREATE POLICY ops_all_shipments ON shipments FOR ALL USING (get_user_role() = 'operations');
 CREATE POLICY ops_all_containers ON shipment_containers FOR ALL USING (get_user_role() = 'operations');
 
--- 3. Sales
--- Access restricted to their assigned customers
 CREATE POLICY sales_read_customers ON customers FOR SELECT USING (get_user_role() = 'sales' AND sales_owner_id = auth.uid());
 CREATE POLICY sales_read_po ON purchase_orders FOR SELECT USING (
     get_user_role() = 'sales' AND customer_id IN (SELECT id FROM customers WHERE sales_owner_id = auth.uid())
@@ -167,17 +159,15 @@ CREATE POLICY sales_read_shipments ON shipments FOR SELECT USING (
     get_user_role() = 'sales' AND po_id IN (SELECT id FROM purchase_orders WHERE customer_id IN (SELECT id FROM customers WHERE sales_owner_id = auth.uid()))
 );
 
--- 4. Customers
--- Read-only access to their specific shipments and documents
 CREATE POLICY customer_read_own_po ON purchase_orders FOR SELECT USING (
-    get_user_role() = 'customer' AND customer_id IN (SELECT id FROM customers WHERE id = auth.uid()) -- Assuming user.id maps to customer or via auth mapping
+    get_user_role() = 'customer' AND customer_id IN (SELECT id FROM customers WHERE id = auth.uid())
 );
 CREATE POLICY customer_read_own_shipments ON shipments FOR SELECT USING (
     get_user_role() = 'customer' AND po_id IN (SELECT id FROM purchase_orders WHERE customer_id = auth.uid())
 );
 
 -- ---------------------------------------------------------------------------------------
--- DEFAULT SEED DATA
+-- SEED DATA
 -- ---------------------------------------------------------------------------------------
 WITH new_product AS (
     INSERT INTO products (id, product_code, product_name)
